@@ -40,6 +40,8 @@ export function FeedsPage() {
     const feedListClass = siteConfig.feedLayout === "masonry" ? "wauto columns-1 gap-5 ani-show md:columns-2" : "wauto flex flex-col ani-show";
     const currentFeeds = feeds[listState] ?? { size: 0, data: [], hasNext: false };
     const currentFeedData = Array.isArray(currentFeeds.data) ? currentFeeds.data : [];
+    const featuredFeed = listState === 'normal' && page === 1 ? currentFeedData.find(feed => feed.top > 0) : undefined;
+    const remainingFeeds = currentFeedData.filter(feed => feed !== featuredFeed);
     const ref = useRef("")
     function fetchFeeds(type: FeedType) {
         client.feed.list({
@@ -78,11 +80,25 @@ export function FeedsPage() {
                 <meta property="og:url" content={document.URL} />
             </Helmet>
             <Waiting for={feeds.draft.size + feeds.normal.size + feeds.unlisted.size > 0 || status === 'idle'}>
-                <main className="w-full flex flex-col justify-center items-center mb-8">
-                    <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
-                        <p>
-                            {listState === 'draft' ? t('draft_bin') : listState === 'normal' ? t('article.title') : t('unlisted')}
-                        </p>
+                <main className="library-home w-full flex flex-col justify-center items-center mb-8">
+                    {listState === 'normal' && page === 1 && (
+                        <section className="wauto library-intro">
+                            <p className="library-eyebrow">{siteConfig.name} / {t('library.collection')}</p>
+                            <h1>{t('library.intro')}</h1>
+                            <p className="library-intro-description">{siteConfig.description || t('library.description')}</p>
+                            <a href="#library-entries" className="library-intro-link">{t('library.explore')} <span aria-hidden="true">↓</span></a>
+                            <span className="library-intro-mark" aria-hidden="true">R</span>
+                        </section>
+                    )}
+                    {featuredFeed && status === 'idle' && (
+                        <section className="wauto library-featured" aria-label={t('library.featured')}>
+                            <FeedCard {...featuredFeed} literary featured />
+                        </section>
+                    )}
+                    <div id="library-entries" className="wauto library-section-heading">
+                        <h2>
+                            {listState === 'draft' ? t('draft_bin') : listState === 'normal' ? t('library.works') : t('unlisted')}
+                        </h2>
                         <div className="flex flex-row justify-between">
                             <p className="text-sm mt-4 text-neutral-500 font-normal">
                                 {t('article.total$count', { count: currentFeeds.size })}
@@ -100,22 +116,23 @@ export function FeedsPage() {
                         </div>
                     </div>
                     <Waiting for={status === 'idle'}>
-                        <div className={feedListClass}>
-                            {currentFeedData.map(({ id, ...feed }: any) => (
-                                <FeedCard key={id} id={id} {...feed} />
+                        <div className={`${feedListClass} library-entries ${siteConfig.feedLayout === 'masonry' ? 'library-entries--masonry' : ''}`}>
+                            {remainingFeeds.map(({ id, ...feed }: any) => (
+                                <FeedCard key={id} id={id} {...feed} literary />
                             ))}
+                            {currentFeedData.length === 0 && <p className="library-empty">{t('library.empty')}</p>}
                         </div>
                         <div className="wauto flex flex-row items-center mt-4 ani-show">
                             {page > 1 &&
                                 <Link href={`/?type=${listState}&page=${(page - 1)}`}
-                                    className={`text-sm font-normal rounded-full px-4 py-2 text-white bg-theme`}>
+                                    className="library-page-link text-sm px-4 py-2">
                                     {t('previous')}
                                 </Link>
                             }
                             <div className="flex-1" />
                             {currentFeeds.hasNext &&
                                 <Link href={`/?type=${listState}&page=${(page + 1)}`}
-                                    className={`text-sm font-normal rounded-full px-4 py-2 text-white bg-theme`}>
+                                    className="library-page-link text-sm px-4 py-2">
                                     {t('next')}
                                 </Link>
                             }

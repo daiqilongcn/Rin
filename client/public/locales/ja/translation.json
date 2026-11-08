@@ -86,6 +86,28 @@
       "title": "トップ解除"
     }
   },
+  "library": {
+    "auto": "サイトに合わせる",
+    "collection": "言葉のコレクション",
+    "description": "静かなページで、ゆっくり物語を読む。",
+    "empty": "まだ公開された作品はありません。",
+    "explore": "読み始める",
+    "featured": "注目の作品",
+    "font": "書体",
+    "intro": "物語は、言葉のあいだに。",
+    "larger_text": "文字を大きく",
+    "night": "夜間",
+    "paper": "背景",
+    "read": "読む",
+    "reading_options": "読書設定",
+    "reset_text": "リセット",
+    "sans": "ゴシック体",
+    "serif": "明朝体",
+    "smaller_text": "文字を小さく",
+    "text_size": "文字サイズ",
+    "warm": "暖色",
+    "works": "作品"
+  },
   "avatar": {
     "url": "アバターURL"
   },

@@ -21,6 +21,7 @@ import { Tips } from "../components/tips";
 import mermaid from "mermaid";
 import { AdjacentSection } from "../components/adjacent_feed.tsx";
 import { stripImageUrlMetadata } from "../utils/image-upload";
+import { DEFAULT_READING, useReadingPreferences } from "../hooks/use-reading-preferences";
 
 function extractFirstMarkdownImageUrl(content: string) {
   const match = /!\[.*?\]\((\S+?)(?:\s+"[^"]*")?\)/.exec(content);
@@ -43,6 +44,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
   const { showAlert, AlertUI } = useAlert();
   const { showConfirm, ConfirmUI } = useConfirm();
   const [top, setTop] = useState<number>(0);
+  const [reading, setReading] = useReadingPreferences();
   const config = useContext(ClientConfigContext);
   const counterEnabled = config.getBoolean('counter.enabled');
   const hasAISummary = Boolean(feed?.ai_summary?.trim());
@@ -165,7 +167,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
           />
         </Helmet>
       )}
-      <div className="w-full flex flex-row justify-center ani-show">
+      <div className="reading-layout w-full flex flex-row justify-center ani-show">
         {error && (
           <>
             <div className="flex flex-col wauto rounded-2xl bg-w m-2 p-6 items-center justify-center space-y-2">
@@ -182,13 +184,15 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
         )}
         {feed && !error && (
           <>
-            <div className="xl:w-64" />
-            <main className="wauto">
+            <main className="reading-main">
               <article
-                className="rounded-2xl bg-w m-2 px-6 py-4"
+                className="literary-article m-2 px-6 py-4"
                 aria-label={feed.title ?? "Unnamed"}
+                data-reading-paper={reading.paper}
+                data-reading-font={reading.font}
+                style={{ ["--reading-size" as string]: `${reading.size}px` }}
               >
-                <div className="flex justify-between">
+                <div className="reading-title-row flex justify-between gap-4">
                   <div>
                     <div className="mt-1 mb-1 flex gap-1">
                       <p
@@ -223,13 +227,13 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       </span>
                     </p>}
                     <div className="flex flex-row items-center">
-                      <h1 className="text-2xl font-bold t-primary break-all">
+                      <h1 className="literary-article-title break-words [overflow-wrap:anywhere]">
                         {feed.title}
                       </h1>
                       <div className="flex-1 w-0" />
                     </div>
                   </div>
-                  <div className="pt-2">
+                  <div className="shrink-0 pt-2">
                     {profile?.permission && (
                       <div className="flex gap-2">
                         <button
@@ -257,8 +261,33 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                     )}
                   </div>
                 </div>
+                <details className="literary-reading-tools">
+                  <summary>{t("library.reading_options")}</summary>
+                  <div className="reading-controls">
+                    <div role="group" aria-label={t("library.text_size")}>
+                      <button type="button" disabled={reading.size <= 16} onClick={() => setReading({ ...reading, size: reading.size - 1 })} aria-label={t("library.smaller_text")}>A−</button>
+                      <output aria-live="polite">{reading.size}px</output>
+                      <button type="button" disabled={reading.size >= 24} onClick={() => setReading({ ...reading, size: reading.size + 1 })} aria-label={t("library.larger_text")}>A+</button>
+                    </div>
+                    <label>{t("library.font")}
+                      <select value={reading.font} onChange={e => setReading({ ...reading, font: e.target.value as typeof reading.font })}>
+                        <option value="serif">{t("library.serif")}</option>
+                        <option value="sans">{t("library.sans")}</option>
+                      </select>
+                    </label>
+                    <label>{t("library.paper")}
+                      <select value={reading.paper} onChange={e => setReading({ ...reading, paper: e.target.value as typeof reading.paper })}>
+                        <option value="auto">{t("library.auto")}</option>
+                        <option value="warm">{t("library.warm")}</option>
+                        <option value="night">{t("library.night")}</option>
+                      </select>
+                    </label>
+                    <button type="button" onClick={() => setReading({ ...DEFAULT_READING })}>{t("library.reset_text")}</button>
+                  </div>
+                </details>
                 {(hasAISummary || showAISummaryState) && (
-                  <div className="my-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-100 dark:border-purple-800/30">
+                  <details className="reading-summary my-4 p-4">
+                    <summary>{t('ai_summary.title')}</summary>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
                         <i className="ri-sparkling-2-fill text-purple-500" />
@@ -280,7 +309,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                         {feed.ai_summary_error}
                       </p>
                     ) : null}
-                  </div>
+                  </details>
                 )}
                 <Markdown content={feed.content} />
                 <div className="mt-6 flex flex-col gap-2">
@@ -309,7 +338,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
               {feed && <Comments id={`${feed.id}`} />}
               <div className="h-16" />
             </main>
-            <div className="w-80 hidden lg:block relative">
+            <div className="reading-toc hidden xl:block">
               <div
                 className={`start-0 end-0 top-[5.5rem] sticky`}
               >
@@ -327,10 +356,12 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
 
 export function TOCHeader({ TOC }: { TOC: () => JSX.Element }) {
   const [isOpened, setIsOpened] = useState(false);
+  const { t } = useTranslation();
 
   return (
-    <div className="shrink-0 lg:hidden">
+    <div className="shrink-0 xl:hidden">
       <button
+        aria-label={t("index.title")}
         onClick={() => setIsOpened(true)}
         className="w-10 h-10 rounded-full flex flex-row items-center justify-center"
       >

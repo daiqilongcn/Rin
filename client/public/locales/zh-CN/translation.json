@@ -86,6 +86,28 @@
       "title": "取消置顶"
     }
   },
+  "library": {
+    "auto": "跟随系统",
+    "collection": "文字收藏",
+    "description": "在安静的页面里，慢慢读完一个故事。",
+    "empty": "这里还没有公开内容。",
+    "explore": "开始阅读",
+    "featured": "精选作品",
+    "font": "字体",
+    "intro": "故事发生在文字之间。",
+    "larger_text": "增大字号",
+    "night": "夜间",
+    "paper": "纸张",
+    "read": "开始阅读",
+    "reading_options": "阅读设置",
+    "reset_text": "重置",
+    "sans": "黑体",
+    "serif": "宋体",
+    "smaller_text": "减小字号",
+    "text_size": "字号",
+    "warm": "暖纸",
+    "works": "作品"
+  },
   "avatar": {
     "url": "头像 URL"
   },

@@ -86,6 +86,28 @@
       "title": "取消置頂"
     }
   },
+  "library": {
+    "auto": "跟隨網站",
+    "collection": "文字收藏",
+    "description": "在安靜的頁面裡，慢慢讀完一個故事。",
+    "empty": "這裡還沒有公開內容。",
+    "explore": "開始閱讀",
+    "featured": "精選作品",
+    "font": "字型",
+    "intro": "故事發生在文字之間。",
+    "larger_text": "增大字級",
+    "night": "夜間",
+    "paper": "紙張",
+    "read": "開始閱讀",
+    "reading_options": "閱讀設定",
+    "reset_text": "重設",
+    "sans": "黑體",
+    "serif": "宋體",
+    "smaller_text": "減小字級",
+    "text_size": "字級",
+    "warm": "暖紙",
+    "works": "作品"
+  },
   "avatar": {
     "url": "頭像 URL"
   },

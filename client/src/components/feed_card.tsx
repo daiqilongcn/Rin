@@ -101,23 +101,26 @@ export type FeedCardProps = {
     updatedAt: Date;
     preview?: boolean;
     variant?: FeedCardVariant;
+    literary?: boolean;
+    featured?: boolean;
 };
 
-export function FeedCard({ id, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt, preview = false, variant }: FeedCardProps) {
+export function FeedCard({ id, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt, preview = false, variant, literary = false, featured = false }: FeedCardProps) {
     const { t } = useTranslation();
     const siteConfig = useSiteConfig();
     const safeHashtags = Array.isArray(hashtags) ? hashtags : [];
     const activeVariant = normalizeFeedCardVariant(variant ?? siteConfig.feedCardVariant);
     const styles = FEED_CARD_STYLES[activeVariant];
     const body = (
-        <div className={styles.card}>
+        <div className={literary ? `library-entry ${featured ? "library-entry--featured" : ""}` : styles.card}>
             {avatar ? (
-                <div className={styles.imageWrap}>
+                <div className={literary ? "library-entry-cover" : styles.imageWrap}>
                     <FeedCardImage src={avatar} variant={activeVariant} />
                 </div>
             ) : null}
-            <div className={activeVariant === "editorial" ? "px-2 pb-2" : ""}>
-                <h1 className={styles.title}>{title}</h1>
+            <div className={literary ? "library-entry-body" : activeVariant === "editorial" ? "px-2 pb-2" : ""}>
+                {featured && <p className="library-eyebrow">{t("library.featured")}</p>}
+                <h2 className={literary ? "library-entry-title" : styles.title}>{title}</h2>
                 <p className={`space-x-2 ${styles.meta}`}>
                     <span title={new Date(createdAt).toLocaleString()}>
                         {createdAt === updatedAt ? timeago(createdAt) : t('feed_card.published$time', { time: timeago(createdAt) })}
@@ -134,10 +137,11 @@ export function FeedCard({ id, title, avatar, draft, listed, top, summary, hasht
                     {top === 1 && <span className="text-theme">{t('article.top.title')}</span>}
                 </p>
                 <p className={`whitespace-pre-line break-words [overflow-wrap:anywhere] ${styles.summary} ${activeVariant === "editorial" ? "mt-4 max-w-3xl" : ""}`}>{summary}</p>
+                {literary && <span className="library-read-link">{t("library.read")} <span aria-hidden="true">↗</span></span>}
                 {safeHashtags.length > 0 &&
                     <div className={`flex flex-row flex-wrap justify-start gap-2 ${activeVariant === "editorial" ? "mt-4" : "mt-2 gap-x-2"}`}>
                         {safeHashtags.map(({ name }, index) => (
-                            <HashTag key={index} name={name} />
+                            literary ? <span key={index} className="library-tag">{name}</span> : <HashTag key={index} name={name} />
                         ))}
                     </div>
                 }
@@ -145,5 +149,5 @@ export function FeedCard({ id, title, avatar, draft, listed, top, summary, hasht
         </div>
     );
 
-    return preview ? body : <Link href={`/feed/${id}`} target="_blank" rel="noopener noreferrer" className="block min-w-0 w-full">{body}</Link>;
+    return preview ? body : <Link href={`/feed/${id}`} target={literary ? undefined : "_blank"} rel={literary ? undefined : "noopener noreferrer"} className="block min-w-0 w-full">{body}</Link>;
 }

@@ -24,12 +24,12 @@ export function BrandLink({
 }) {
   return (
     <Link aria-label="home" href="/" className={className}>
-      {showAvatar && siteConfig.avatar ? (
+      {showAvatar ? (
         <ImageWithFallback
-          src={siteConfig.avatar}
+          src={siteConfig.avatar || "/logo.svg"}
           alt={siteConfig.name}
-          className={avatarClassName || (compact ? "h-10 w-10 rounded-full border-2" : "h-12 w-12 rounded-2xl border-2")}
-          imageClassName={darkInvertImageClass(siteConfig.avatar)}
+          className={avatarClassName || (compact ? "h-9 w-9 shrink-0 rounded-lg" : "h-11 w-11 shrink-0 rounded-xl")}
+          imageClassName={siteConfig.avatar ? darkInvertImageClass(siteConfig.avatar) : ""}
         />
       ) : null}
       <div className={`${showAvatar ? (compact ? "mx-2" : "mx-4") : ""} flex min-w-0 flex-col items-start justify-center`}>

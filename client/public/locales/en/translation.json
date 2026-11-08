@@ -86,6 +86,28 @@
       "title": "Untop"
     }
   },
+  "library": {
+    "auto": "System",
+    "collection": "Collected words",
+    "description": "A quiet place to take your time with a story.",
+    "empty": "There is nothing published here yet.",
+    "explore": "Begin reading",
+    "featured": "Featured writing",
+    "font": "Font",
+    "intro": "Stories live between the lines.",
+    "larger_text": "Increase text size",
+    "night": "Night",
+    "paper": "Paper",
+    "read": "Read",
+    "reading_options": "Reading options",
+    "reset_text": "Reset",
+    "sans": "Sans",
+    "serif": "Serif",
+    "smaller_text": "Decrease text size",
+    "text_size": "Text size",
+    "warm": "Warm paper",
+    "works": "Works"
+  },
   "avatar": {
     "url": "Avatar URL"
   },

@@ -15,7 +15,7 @@ export function NavBar({
 
   return (
     <>
-      <NavItem menu={menu} onClick={onClick} itemClassName={itemClassName} title={t("article.title")} selected={location === "/" || location.startsWith("/feed")} href="/" />
+      <NavItem menu={menu} onClick={onClick} itemClassName={itemClassName} title={t("library.works")} selected={location === "/" || location.startsWith("/feed")} href="/" />
       <NavItem menu={menu} onClick={onClick} itemClassName={itemClassName} title={t("timeline")} selected={location === "/timeline"} href="/timeline" />
       <NavItem menu={menu} onClick={onClick} itemClassName={itemClassName} title={t("moments.title")} selected={location === "/moments"} href="/moments" />
       <NavItem menu={menu} onClick={onClick} itemClassName={itemClassName} title={t("hashtags")} selected={location === "/hashtags"} href="/hashtags" />
@@ -45,6 +45,7 @@ function NavItem({
   return when ? (
     <Link
       href={href}
+      aria-current={selected ? "page" : undefined}
       className={`${menu ? "" : "hidden"} md:block cursor-pointer hover:text-theme duration-300 px-2 py-4 md:p-4 text-sm ${
         selected ? "text-theme" : "dark:text-white"
       } ${itemClassName}`}
